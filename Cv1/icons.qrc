@@ -1,5 +1,5 @@
 <RCC>
-  <qresource prefix="icons">
+  <qresource prefix="images">
     <file>icons/about.png</file>
     <file>icons/clear.png</file>
     <file>icons/clear_all.png</file>
