@@ -7,7 +7,8 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-
+from draw import Draw
+from algorithms import *
 
 class Ui_MainForm(object):
     def setupUi(self, MainForm):
@@ -90,6 +91,50 @@ class Ui_MainForm(object):
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
+        
+        #Connect signals and slots
+        self.actionPoint_polygon.triggered.connect(self.changeStatusClick)
+        self.actionClear.triggered.connect(self.clearClick)
+        self.actionRay_Crossing.triggered.connect(self.analyzePointAndPositionClick)
+        
+        
+    def changeStatusClick(self):
+        #User defined slot, change source
+        self.Canvas.changeStatus()
+        
+        
+    def clearClick(self):
+        #User defined slot, clear data
+        self.Canvas.clearData()    
+        
+
+    def analyzePointAndPositionClick(self):
+        #Get point
+        q = self.Canvas.getQ()
+        
+        #Get polygon
+        pol = self.Canvas.getPol()
+        
+        #Create new object
+        a = Algorithms()
+        
+        #Analyze point and polygon position
+        result = a.getPointPolygonPositionRC(q, pol)
+        
+        #Create message box
+        mb = QtWidgets.QMessageBox()
+        mb.setWindowTitle('Point and polygon position')
+        
+        #Set results
+        if result:
+            mb.setText("Point is inside the polygon")
+        else: 
+            mb.setText("Point is outside the polygon") 
+            
+        #Show message box
+        mb.exec()
+        
+    
 
     def retranslateUi(self, MainForm):
         _translate = QtCore.QCoreApplication.translate
@@ -110,7 +155,7 @@ class Ui_MainForm(object):
         self.actionRay_Crossing.setToolTip(_translate("MainForm", "Analyze point and polygon position using Ray Crossing algorithm"))
         self.actionWinding_Number.setText(_translate("MainForm", "Winding Number"))
         self.actionWinding_Number.setToolTip(_translate("MainForm", "Analyze point and polygon position using Winding Number algorithm"))
-from draw import Draw
+
 
 
 if __name__ == "__main__":
@@ -121,3 +166,5 @@ if __name__ == "__main__":
     ui.setupUi(MainForm)
     MainForm.show()
     sys.exit(app.exec())
+    
+    
