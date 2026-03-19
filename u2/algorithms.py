@@ -56,13 +56,14 @@ class Algorithms:
             #Browse all points
             for i in range(len(pol)):
                 
+                #Different points
                 if pj != pol[i]:
                     
                     #Compute omega
                     omega = self.get2VectorsAngle(pj, pj1, pj, pol[i])
             
                     #Actualize maximum
-                    if(omega>omega_max):
+                    if(omega > omega_max):
                         omega_max = omega
                         index_max = i
                     
@@ -102,7 +103,7 @@ class Algorithms:
         area = (v2.x() - v1.x()) * (v3.y() - v2.y())
         
         return mmb, area
-    
+     
 
     def rotatePolygon(self, pol:QPolygonF, sig:float):
         #Rotate polygon according to a given angle
@@ -124,6 +125,39 @@ class Algorithms:
         return pol_rot
     
     
+    def createMBR(self, ch:QPolygonF):
+        #Create minimum bounding rectangle using repeated construction of mmb
+        sigma_min = 0
+        n = len(ch)
+        
+        #Initialization
+        mmb_min, area_min = self.mmb(ch)
+        
+        # Process all edges of convex hull
+        for i in range(n):
+            #Coordinate differences
+            dx = ch[(i+1)%n].x() - ch[i].x()
+            dy = ch[(i+1)%n].y() - ch[i].y()
+            
+            # Compute direction
+            sigma = atan2(dy, dx)
+            
+            #Rotate convex hull
+            ch_r = self.rotate(ch, -sigma)
+        
+            #Compute minmax box
+            mmb, area = self.mmb(ch_r)
+            
+            #Did we find a better min-max box?
+            if area < area_min:    
+                #Update minimum
+                area_min = area
+                mmb_min = mmb
+                sigma_min = sigma
+                
+        #Back rotation
+        return  self.rotatePolygon(mmb_min, sigma_min) 
+
     
     
     
