@@ -47,7 +47,7 @@ class Algorithms:
         #Add to CH
         ch.append(pj)
         
-        # Find all points of CH
+        #Find all points of CH
         while True:
             #Maximum and its index
             omega_max = 0
@@ -125,15 +125,18 @@ class Algorithms:
         return pol_rot
     
     
-    def createMBR(self, ch:QPolygonF):
+    def createMBR(self, building:QPolygonF):
         #Create minimum bounding rectangle using repeated construction of mmb
         sigma_min = 0
-        n = len(ch)
+        
+        #Convex hull
+        ch = self.createCH(building)
         
         #Initialization
-        mmb_min, area_min = self.mmb(ch)
+        mmb_min, area_min = self.createMMB(ch)
         
         # Process all edges of convex hull
+        n = len(ch)
         for i in range(n):
             #Coordinate differences
             dx = ch[(i+1)%n].x() - ch[i].x()
@@ -143,10 +146,10 @@ class Algorithms:
             sigma = atan2(dy, dx)
             
             #Rotate convex hull
-            ch_r = self.rotate(ch, -sigma)
+            ch_r = self.rotatePolygon(ch, -sigma)
         
-            #Compute minmax box
-            mmb, area = self.mmb(ch_r)
+            #Compute min-max box
+            mmb, area = self.createMMB(ch_r)
             
             #Did we find a better min-max box?
             if area < area_min:    
@@ -159,5 +162,84 @@ class Algorithms:
         return  self.rotatePolygon(mmb_min, sigma_min) 
 
     
+    def getArea(self, pol:QPolygonF):
+        #Compute area    
+        area = 0
+        n = len(pol)
+        
+        # Process all vertices
+        for i in range(n):
+            area += pol[i].x() * (pol[(i + 1) % n].y() - pol[(i - 1 + n) % n].y())
+            
+        return abs(area)/2    
     
-    
+        
+    def resizeRectangle(self, building:QPolygonF, mbr: QPolygonF):
+        #Resizing rectangle area to match building area
+        
+        #Area of the rectangle
+        A = self.getArea(mbr)
+        
+        #Area of the building
+        Ab = self.getArea(building)
+        
+        #Fraction of both areas
+        k = Ab / A
+        
+        #Compute centroid of the rectangle
+        x_c = (mbr[0].x()+mbr[1].x()+mbr[2].x()+mbr[3].x()) / 4
+        y_c = (mbr[0].y()+mbr[1].y()+mbr[2].y()+mbr[3].y()) / 4
+        
+        #Compute vectors 
+        v1_x = mbr[0].x() - x_c
+        v1_y = mbr[0].y() - y_c 
+        
+        v2_x = mbr[1].x() - x_c
+        v2_y = mbr[1].y() - y_c 
+
+        v3_x = mbr[2].x() - x_c
+        v3_y = mbr[2].y() - y_c 
+        
+        v4_x = mbr[3].x() - x_c
+        v4_y = mbr[3].y() - y_c
+        
+        #Resize vectors v1 - v4 
+        v1_x_res = v1_x * k
+        v1_y_res = v1_y * k
+        
+        v2_x_res = v2_x * k
+        v2_y_res = v2_y * k
+        
+        v3_x_res = v3_x * k
+        v3_y_res = v3_y * k
+        
+        v4_x_res = v4_x * k
+        v4_y_res = v4_y * k
+        
+        #Compute new vertices
+        p1_x = v1_x_res + x_c  
+        p1_y = v1_y_res + y_c 
+        
+        p2_x = v2_x_res + x_c  
+        p2_y = v2_y_res + y_c 
+        
+        p3_x = v3_x_res + x_c  
+        p3_y = v3_y_res + y_c 
+        
+        p4_x = v4_x_res + x_c  
+        p4_y = v4_y_res + y_c
+        
+        # Compute new coordinates
+        p1 = QPointF(p1_x,  p1_y)
+        p2 = QPointF(p2_x,  p2_y)
+        p3 = QPointF(p3_x,  p3_y)
+        p4 = QPointF(p4_x,  p4_y)   
+        
+        #Create polygon
+        mbr_res = QPolygonF()
+        mbr_res.append(p1)
+        mbr_res.append(p2)
+        mbr_res.append(p3)
+        mbr_res.append(p4)
+       
+        return mbr_res
