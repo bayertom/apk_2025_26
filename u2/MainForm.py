@@ -7,6 +7,7 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
+from algorithms import *
  
 
 class Ui_MainForm(object):
@@ -110,7 +111,12 @@ class Ui_MainForm(object):
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
-
+        
+        
+    def createMBRClick(self):
+        pass
+        
+        
     def retranslateUi(self, MainForm):
         _translate = QtCore.QCoreApplication.translate
         MainForm.setWindowTitle(_translate("MainForm", "Simplify buildings"))
