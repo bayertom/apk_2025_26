@@ -2,6 +2,8 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from math import *
+import numpy as np
+import numpy.linalg as np
 
 class Algorithms:
     
@@ -10,7 +12,7 @@ class Algorithms:
     
     def get2VectorsAngle(self, p1:QPointF, p2:QPointF, p3:QPointF, p4:QPointF):
         #Angle between two vectors
-        ux = p2.x() - p1.x()
+        ux = p2.x() - p1.x()    
         uy = p2.y() - p1.y()
         
         vx = p4.x() - p3.x()
@@ -204,17 +206,17 @@ class Algorithms:
         v4_y = mbr[3].y() - y_c
         
         #Resize vectors v1 - v4 
-        v1_x_res = v1_x * k
-        v1_y_res = v1_y * k
+        v1_x_res = v1_x * sqrt(k)
+        v1_y_res = v1_y * sqrt(k)
         
-        v2_x_res = v2_x * k
-        v2_y_res = v2_y * k
+        v2_x_res = v2_x * sqrt(k)
+        v2_y_res = v2_y * sqrt(k)
         
-        v3_x_res = v3_x * k
-        v3_y_res = v3_y * k
+        v3_x_res = v3_x * sqrt(k)
+        v3_y_res = v3_y * sqrt(k)
         
-        v4_x_res = v4_x * k
-        v4_y_res = v4_y * k
+        v4_x_res = v4_x * sqrt(k)
+        v4_y_res = v4_y * sqrt(k)
         
         #Compute new vertices
         p1_x = v1_x_res + x_c  
@@ -243,3 +245,51 @@ class Algorithms:
         mbr_res.append(p4)
        
         return mbr_res
+    
+    
+    def simplifyBuildingMBR(self, building:QPolygonF):
+        #Simplify building using MBR
+        mbr = self.createMBR(building)
+        
+        #Resize rectangle
+        mbr_res = self.resizeRectangle(building, mbr)
+        
+        return mbr_res
+    
+    
+    
+    def simplifyBuildingPCA(self, building:QPolygonF):
+        #Simplify building using PCA
+        X, Y = [], []
+        
+        #Convert polygon vertices to matrix
+        for p in building:
+            X.append(p.x())
+            Y.append(p.y())
+            
+        #Create A
+        A = np.array([X, Y])
+
+        #Compute covariance matrix
+        C = np.cov(A)
+        
+        #Singular Value Decomposition
+        [U, S, V] = np.svd(C)
+        
+        #Compute direction of the principal component
+        sigma = atan2(V[0][1], V[0][0])
+
+        #Rotate building by -sigma
+        
+        
+        #Create min-max box
+        
+        
+        #Rotate min-max box by sigma
+        
+        
+        #Resize min-max box
+        
+        
+
+    

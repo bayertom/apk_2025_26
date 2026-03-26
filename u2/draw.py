@@ -41,13 +41,15 @@ class Draw(QWidget):
         qp.drawPolygon(self.__building)
         
         #Set attributes, convex hull
-        qp.setPen(Qt.GlobalColor.red)
+        qp.setPen(Qt.GlobalColor.blue)
+        qp.setBrush(Qt.GlobalColor.transparent)
         
         #Draw convex hull
         qp.drawPolygon(self.__ch)
         
         #Set attributes, MBR
-        qp.setPen(Qt.GlobalColor.blue)
+        qp.setPen(Qt.GlobalColor.red)
+        qp.setBrush(Qt.GlobalColor.transparent)
         
         #Draw MBR
         qp.drawPolygon(self.__mbr)
@@ -69,5 +71,16 @@ class Draw(QWidget):
     def getBuilding(self):
         #Get building
         return self.__building
+    
+    
+    def clearResult(self):
+        #Clear data structures for results
+        self.__ch.clear()
+        self.__mbr.clear()
+        
+        #Repaint screen
+        self.repaint()
+        
+        
         
         
