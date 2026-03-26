@@ -110,14 +110,31 @@ class Ui_MainForm(object):
         self.toolBar.addSeparator()
         
         #Simplify building using MBR
-        self.actionMin_Bounding_Rectangle.triggered.connect(self.createMBRClick)
+        self.actionMin_Bounding_Rectangle.triggered.connect(self.simplifyBuildingMBRClick)
         self.actionClear_results.triggered.connect(self.clearResultsClick)
+        self.actionPCAS.triggered.connect(self.simplifyBuildingPCAClick)
 
         self.retranslateUi(MainForm)
         QtCore.QMetaObject.connectSlotsByName(MainForm)
         
         
-    def createMBRClick(self):
+    def simplifyBuildingPCAClick(self):
+        #Get building
+        building = self.Canvas.getBuilding()
+        
+        #Create objects
+        a = Algorithms()
+        
+        #Run simplification
+        mbr_res = a.simplifyBuildingPCA(building)
+        
+        #Return results
+        self.Canvas.setMBR(mbr_res)
+        
+        #Repaint
+        self.Canvas.repaint()
+        
+    def simplifyBuildingMBRClick(self):
         #Get building
         building = self.Canvas.getBuilding()
         

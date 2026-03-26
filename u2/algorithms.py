@@ -3,7 +3,7 @@ from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from math import *
 import numpy as np
-import numpy.linalg as np
+import numpy.linalg as np2
 
 class Algorithms:
     
@@ -274,22 +274,24 @@ class Algorithms:
         C = np.cov(A)
         
         #Singular Value Decomposition
-        [U, S, V] = np.svd(C)
+        [U, S, V] = np2.svd(C)
         
         #Compute direction of the principal component
         sigma = atan2(V[0][1], V[0][0])
 
         #Rotate building by -sigma
-        
+        build_rot = self.rotatePolygon(building, -sigma)
         
         #Create min-max box
-        
+        mmb, area = self.createMMB(build_rot)
         
         #Rotate min-max box by sigma
-        
+        mbr = self.rotatePolygon(mmb, sigma)
         
         #Resize min-max box
+        mbr_res = self.resizeRectangle(building, mbr)
         
+        return mbr_res
         
 
     
