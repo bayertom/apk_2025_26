@@ -135,12 +135,29 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionParameters)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionExit)
+        
+        #Connect
+        self.actionCreate_DT.triggered.connect(self.createDTClick)
 
         self.retranslateUi(MainWindow)
 
-        #User defined function
-
-
+    #User defined function
+    def createDTClick(self):
+        #Create DT
+        #Get points
+        points = self.Canvas.getPoints()
+        
+        #Create new object
+        a = Algorithms()
+        
+        #Process data> create DT
+        dt = a.createDT(points)
+        
+        #Set results
+        self.Canvas.setDT(dt)
+        
+        #Repaint
+        self.Canvas.repaint()
         
       
     def retranslateUi(self, MainWindow):

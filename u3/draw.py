@@ -1,37 +1,30 @@
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
+from qpoint3df import *
 
 class Draw(QWidget):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__pol = QPolygonF()
-        self.__q = QPointF(100, 100)
-        self.__add_vertex = True
+        self.__points =[]
+        self.__DT = []
         
-
+        
     def mousePressEvent(self, e):
         #Get cursor coordinates 
         x = e.position().x()
         y = e.position().y()
         
-        #Create polygon vertex
-        if self.__add_vertex == True:
-            
-            #Create new point
-            p = QPointF(x,y)
-            
-            #Add P to polygon
-            self.__pol.append(p)
-            
-        #Set new q coordinates
-        else: 
-            self.__q.setX(x)
-            self.__q.setY(y)
-                    
+        #Create new point
+        p = QPoint3DF(x, y, 0)
+        
+        #Add P to polygon
+        self.__points.append(p)
+        
         #Repaint
         self.repaint()
+        
 
     def paintEvent(self, e):
         #Draw situation
@@ -40,42 +33,47 @@ class Draw(QWidget):
         #Start draw
         qp.begin(self)
         
-        #Set attributes, polygon
-        qp.setPen(Qt.GlobalColor.black)
-        qp.setBrush(Qt.GlobalColor.yellow)
+        #Create new pen
+        pen = QPen()
         
-        #Draw polygon
-        qp.drawPolygon(self.__pol)
+        #Set properties, edges
+        pen.setColor(Qt.GlobalColor.green)
+        qp.setPen(pen)
         
-        #Set attributes, point
-        qp.setBrush(Qt.GlobalColor.green)
+        #Draw edges
+        for e in self.__DT:
+            qp.drawLine(e.getStart(), e.getEnd())
         
-        
-        #Draw point
-        r = 10
-        qp.drawEllipse(int(self.__q.x()-r), int(self.__q.y()-r), 2*r, 2*r)
+        #Set properties, points
+        pen.setWidth(15)
+        pen.setColor(Qt.GlobalColor.black)
+        qp.setPen(pen)
+   
+   
+        #Draw points
+        qp.drawPoints(self.__points)
         
         #End draw
         qp.end()
         
-    def changeStatus(self):
-        #Input source: point or polygon
-        self.__add_vertex = not (self.__add_vertex)
         
-    def clearData(self):
-        #Clear datas
-        self.__pol.clear()
+    def setDT(self, DT):
+        #Set DT
+        self.__DT = DT
+        
+        
+    def getPoints(self):
+        #Get points
+        return self.__points
+    
+    
+    def clearResult(self):
+        #Clear results of analyses
+        self.__DT.clear()
+           
+        #Repaint screen
         self.repaint()
-        self.__q.setX(-25)
-        self.__q.setY(-25)
-    
-    def getQ(self):
-        #Return point
-        return self.__q
-    
-    def getPol(self):
-        #Return polygon
-        return self.__pol
-    
         
-          
+        
+        
+        
