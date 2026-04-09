@@ -3,6 +3,7 @@ from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from qpoint3df import *
 from math import *
+from edge import *
 
 class Algorithms:
     
@@ -81,6 +82,7 @@ class Algorithms:
         
         return acos(arg)
     
+    
     def findDelaunayPoint(self, p1, p2, points):
         #Find Delaunay point to the edge
         p_dt = None
@@ -94,7 +96,77 @@ class Algorithms:
                 
                 #Point in the left halfplane
                 if self.getPointLinePosition (p_i, p1, p2) == 1:
-                    pass
+                    
+                    #Compute phi
+                    phi = self.get2LinesAngle(p_i, p2, p_i, p1)
+                    
+                    #Update maximum
+                    if phi > phi_max:
+                        phi_max = phi
+                        p_dt = p_i
+        return p_dt
+                    
+    def createDT(self, points):
+        #Create Delaunay triangulation                 
+        DT = []
+        AEL = [] 
         
+        #Find pivot
+        q = min(points, key = lambda k: k.y())   
+        
+        #Find point nearest to q
+        qn = self.getNearestPoint(q, points)       
+        
+        #Create new edges
+        e = Edge(q, qn)
+        es = Edge(qn, q)  
+        
+        #Edges to AEL
+        AEL.append (e)
+        AEL.append (es) 
+        
+        #Repeat until AEL is empty             
+        while AEL:
+            #Take first edge
+            e1 = AEL.pop()
+            
+            #Switch orientation
+            e1s = e1.switchOrientation()
+            
+            #Find Delaunay point
+            p_dt = self.findDelaunayPoint(e1s.getStart(), e1s.getEnd(), points)
+            
+            #Jump to the next iteration
+            if p_dt == None:
+                continue
+            
+            #Create new edges
+            e2 = Edge(e1s.getEnd(), p_dt)
+            e3 = Edge(p_dt, e1s.getStart())
+            
+            #Add new edges to DT
+            DT.append(e1s)
+            DT.append(e2)
+            DT.append(e3)
+            
+            
+            #Update AEL
+            self.updateAEL(e2,AEL)
+            self.updateAEL(e3,AEL)
+            
+        return DT
     
     
+    def updateAEL(self, e, AEL):
+        #Verify if e in AEL with diffferent orientation
+        es = e.switchOrientation()
+        
+        #Edge e in AEL, remove
+        if es in AEL:
+            AEL.remove(es)
+            
+        #Add e to AEL
+        else:
+            AEL.append(e) 
+            
+
