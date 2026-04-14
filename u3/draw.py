@@ -2,6 +2,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from qpoint3df import *
+from random import *
 
 class Draw(QWidget):
 
@@ -9,6 +10,7 @@ class Draw(QWidget):
         super().__init__(*args, **kwargs)
         self.__points =[]
         self.__DT = []
+        self.__contours = []
         
         
     def mousePressEvent(self, e):
@@ -16,8 +18,13 @@ class Draw(QWidget):
         x = e.position().x()
         y = e.position().y()
         
+        #Random z
+        z_min = 200
+        z_max = 500
+        z = (random() * (z_max - z_min)) + z_min
+
         #Create new point
-        p = QPoint3DF(x, y, 0)
+        p = QPoint3DF(x, y, z)
         
         #Add P to polygon
         self.__points.append(p)
@@ -44,6 +51,14 @@ class Draw(QWidget):
         for e in self.__DT:
             qp.drawLine(e.getStart(), e.getEnd())
         
+        #Set properties, contours
+        pen.setColor(Qt.GlobalColor.gray)
+        qp.setPen(pen)
+        
+        #Draw edges
+        for e in self.__contours:
+            qp.drawLine(e.getStart(), e.getEnd())
+        
         #Set properties, points
         pen.setWidth(15)
         pen.setColor(Qt.GlobalColor.black)
@@ -61,7 +76,11 @@ class Draw(QWidget):
         #Set DT
         self.__DT = DT
         
-        
+    
+    def getDT(self):
+        return self.__DT
+    
+
     def getPoints(self):
         #Get points
         return self.__points
@@ -75,5 +94,7 @@ class Draw(QWidget):
         self.repaint()
         
         
-        
+    def setContours(self, contours):
+        #Set contour lines
+        self.__contours = contours
         
