@@ -292,3 +292,5 @@ class Algorithms:
             triangles.append(triangle.setSlope(slope))
 
         return triangles
+    
+    
