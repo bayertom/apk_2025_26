@@ -17,7 +17,11 @@ class Draw(QWidget):
         #Get cursor coordinates 
         x = e.position().x()
         y = e.position().y()
-    
+        
+        #Get random z
+        z_min = 200
+        z_max = 600
+        z = random() * (z_max - z_min) + z_min
 
         #Create new point
         p = QPoint3DF(x, y, z)
@@ -46,7 +50,14 @@ class Draw(QWidget):
         #Draw edges
         for e in self.__DT:
             qp.drawLine(e.getStart(), e.getEnd())
+            
+        #Set properties, contours
+        pen.setColor(Qt.GlobalColor.magenta)
+        qp.setPen(pen)
         
+        #Draw contour lines
+        for e in self.__contours:
+            qp.drawLine(e.getStart(), e.getEnd())
         
         #Set properties, points
         pen.setWidth(15)

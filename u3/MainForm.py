@@ -166,34 +166,7 @@ class Ui_MainWindow(object):
     def createContourLinesClick(self):
         #Create contour lines
         
-        #Ask for DT
-        DT = self.Canvas.getDT()
-
-        #Not enough edges, triangulate
-        if len(DT) < 3:
-            
-            #Create DT
-            self.createDTClick()
-            
-            #Get DT
-            DT = self.Canvas.getDT()
-
-        #Create new algorithm object
-        a = Algorithms()
-
-        #Input data
-        z_min = 100
-        z_max = 2000
-        dz = 10
-
-        #Generate contour lines
-        contours = a.generateContourLines(DT, z_min, z_max, dz)
-
-        #Add them to canvas
-        self.Canvas.setContours(contours)
-
-        #Repaint
-        self.Canvas.repaint()
+        
         
 
     def retranslateUi(self, MainWindow):
