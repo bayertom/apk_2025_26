@@ -171,5 +171,77 @@ class Algorithms:
             AEL.append(e) 
             
             
+    def getContourPoint(self, p1, p2, z):
+        #Compute intersection line and plane
+        xb = (p2.x() - p1.x())/(p2.z() - p1.z()) * (z - p1.z()) + p1.x()
+        yb = (p2.y() - p1.y())/(p2.z() - p1.z()) * (z - p1.z()) + p1.y()
+        
+        return QPoint3DF(xb, yb, z)
     
     
+    def createContourLines(self, DT, z_min, z_max, dz):
+        #Create contour lines using linear interpolation
+    
+        contour_lines = []
+        
+        #Process all contour lines
+        for z in range(z_min, z_max, dz):
+            
+            #Traverse dt triangles one by one
+            for i in range(0, len(DT), 3):
+                
+                #Triangle vertices
+                p1 = DT[i].getStart()
+                p2 = DT[i+1].getStart()
+                p3 = DT[i+1].getEnd()
+                
+                #Height differences
+                dz1 = z - p1.z()
+                dz2 = z - p2.z()
+                dz3 = z - p3.z()
+                
+                #Skip triangle
+                if dz1 == 0 and dz2 == 0 and dz3 == 0:
+                    continue
+                
+                #Edge (p1, p2) is colinear
+                elif dz1 == 0 and dz2 == 0:
+                    contour_lines.append(DT[i])
+                    
+                #Edge (p2, p3) is colinear
+                elif dz2 == 0 and dz3 == 0:
+                    contour_lines.append(DT[i+1])
+                
+                #Edge (p3, p1) is colinear
+                elif dz3 == 0 and dz1 == 0:
+                    contour_lines.append(DT[i+2])
+                    
+                #Edges (p1, p2) and (p2, p3) intersected by plane
+                elif (dz1*dz2 <= 0) and (dz2*dz3 <= 0):
+                    #Edges (p2, p3) and (p3, p1) intersected by plane
+                    self.createContourLineSegment(p1, p2, p3, z, contour_lines)   
+                    
+                elif (dz2*dz3 <= 0) and (dz3*dz1 <= 0):
+                    #Edges (p3, p1) and (p1, p2) intersected by plane    
+                    self.createContourLineSegment(p2, p3, p1, z, contour_lines)
+                
+                elif (dz3*dz1 <= 0) and (dz1*dz2 <= 0):
+                    #Edges (p3, p1) and (p1, p2) intersected by plane
+                    self.createContourLineSegment(p3, p1, p2, z, contour_lines)
+                    
+        return contour_lines
+    
+    
+    def createContourLineSegment(self, p1, p2, p3, z, contour_lines):
+        #Create contour line segment
+        
+        #Line and plane intersection
+        a = self.getContourPoint(p1, p2, z)
+        b = self.getContourPoint(p2, p3, z)
+        
+        #Create edge, contour
+        e = Edge(a, b)
+    
+        #Add contour to the list
+        contour_lines.append(e)
+        
