@@ -142,7 +142,6 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-
     #User defined function
     def createDTClick(self):
         #Create DT
@@ -165,8 +164,31 @@ class Ui_MainWindow(object):
         
     def createContourLinesClick(self):
         #Create contour lines
+        DT = self.Canvas.getDT()
         
+        #We need to create DT
+        if len(DT) <3:
+            
+            #Generate DT
+            self.createDTClick()
+            
+            #Get DT
+            DT = self.Canvas.getDT()
         
+        #Input data
+        z_min = 200
+        z_max = 600
+        dz = 20
+
+        #Create contour lines
+        a = Algorithms()
+        contours = a.createContourLines(DT,z_min,z_max, dz)
+
+        #Set results
+        self.Canvas.setContours(contours)
+        
+        #Repaint
+        self.Canvas.repaint()
         
 
     def retranslateUi(self, MainWindow):
@@ -198,7 +220,6 @@ class Ui_MainWindow(object):
         self.actionClear_all.setText(_translate("MainWindow", "Clear all"))
         self.actionParameters.setText(_translate("MainWindow", "Parameters"))
 from draw import Draw
-
 
 if __name__ == "__main__":
     import sys
