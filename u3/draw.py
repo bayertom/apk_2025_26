@@ -52,18 +52,17 @@ class Draw(QWidget):
             qp.drawLine(e.getStart(), e.getEnd())
             
         #Set properties, contours
-        pen.setColor(Qt.GlobalColor.magenta)
+        pen.setColor(Qt.GlobalColor.gray)
         qp.setPen(pen)
         
         #Draw contour lines
-        for e in self.__contours:
-            qp.drawLine(e.getStart(), e.getEnd())
+        for c in self.__contours:
+            qp.drawLine(c.getStart(), c.getEnd())
         
         #Set properties, points
         pen.setWidth(15)
         pen.setColor(Qt.GlobalColor.black)
         qp.setPen(pen)
-   
    
         #Draw points
         qp.drawPoints(self.__points)

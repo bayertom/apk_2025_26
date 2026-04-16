@@ -149,8 +149,7 @@ class Algorithms:
             DT.append(e1s)
             DT.append(e2)
             DT.append(e3)
-            
-            
+                 
             #Update AEL
             self.updateAEL(e2,AEL)
             self.updateAEL(e3,AEL)
@@ -181,7 +180,6 @@ class Algorithms:
     
     def createContourLines(self, DT, z_min, z_max, dz):
         #Create contour lines using linear interpolation
-    
         contour_lines = []
         
         #Process all contour lines
@@ -218,15 +216,14 @@ class Algorithms:
                     
                 #Edges (p1, p2) and (p2, p3) intersected by plane
                 elif (dz1*dz2 <= 0) and (dz2*dz3 <= 0):
-                    #Edges (p2, p3) and (p3, p1) intersected by plane
                     self.createContourLineSegment(p1, p2, p3, z, contour_lines)   
-                    
+                  
+                #Edges (p3, p1) and (p1, p2) intersected by plane      
                 elif (dz2*dz3 <= 0) and (dz3*dz1 <= 0):
-                    #Edges (p3, p1) and (p1, p2) intersected by plane    
                     self.createContourLineSegment(p2, p3, p1, z, contour_lines)
                 
+                #Edges (p3, p1) and (p1, p2) intersected by plane
                 elif (dz3*dz1 <= 0) and (dz1*dz2 <= 0):
-                    #Edges (p3, p1) and (p1, p2) intersected by plane
                     self.createContourLineSegment(p3, p1, p2, z, contour_lines)
                     
         return contour_lines

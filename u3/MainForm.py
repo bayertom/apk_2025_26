@@ -136,11 +136,12 @@ class Ui_MainWindow(object):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionExit)
         
-        #Connect
+        #Connects
         self.actionCreate_DT.triggered.connect(self.createDTClick)
         self.actionCreateContouLines.triggered.connect(self.createContourLinesClick)
 
         self.retranslateUi(MainWindow)
+        
 
     #User defined function
     def createDTClick(self):
